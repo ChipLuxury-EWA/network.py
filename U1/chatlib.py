@@ -1,5 +1,7 @@
-# Protocol Constants
+#!/bin/python3
+#changes made by chip_luxury.
 
+# Protocol Constants
 CMD_FIELD_LENGTH = 16	# Exact length of cmd field (in bytes)
 LENGTH_FIELD_LENGTH = 4   # Exact length of length field (in bytes)
 MAX_DATA_LENGTH = 10**LENGTH_FIELD_LENGTH-1  # Max size of data field according to protocol
@@ -33,9 +35,8 @@ def build_message(cmd, data):
 	Gets command name (str) and data field (str) and creates a valid protocol message
 	Returns: str, or None if error occured
 	"""
-    # Implement code ...
-
-    return full_msg
+	full_msg = 1
+	return full_msg
 
 
 def parse_message(data):
@@ -46,7 +47,7 @@ def parse_message(data):
     # Implement code ...
 
     # The function should return 2 values
-    return cmd, msg
+    # return cmd, msg
 
 	
 def split_data(msg, expected_fields):
@@ -56,6 +57,12 @@ def split_data(msg, expected_fields):
 	Returns: list of fields if all ok. If some error occured, returns None
 	"""
 	# Implement code ...
+	if msg.count("#") == expected_fields - 1:
+		fields = msg.split(DATA_DELIMITER, expected_fields - 1)
+		return fields
+	else:
+		return None
+	#todo: add try/except
 
 
 def join_data(msg_fields):
@@ -64,3 +71,4 @@ def join_data(msg_fields):
 	Returns: string that looks like cell1#cell2#cell3
 	"""
 	# Implement code ...
+	return DATA_DELIMITER.join(str(i) for i in msg_fields)	
