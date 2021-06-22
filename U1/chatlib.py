@@ -52,7 +52,7 @@ def parse_message(data):  # extract cmd and data from a message
             int(msg_len) == len(msg)):
         return cmd, msg
     else:
-        return ERROR_RETURN
+        return ERROR_RETURN, ERROR_RETURN
 
 def split_data(msg, expected_fields):  # split the parameters from the data string
     if msg.count("#") == expected_fields - 1:
