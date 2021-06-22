@@ -44,13 +44,15 @@ def build_message(cmd, data):  # creating a msg from cmd string and data string
         return ERROR_RETURN
 
 def parse_message(data):  # extract cmd and data from a message
-    cmd = data.split(DELIMITER, 3)[0].strip()
-    msg_len = data.split(DELIMITER, 3)[1].strip()
-    msg = data.split(DELIMITER, 3)[2].strip()
-    if (data.count("|") == 2 and
-        msg_len.isnumeric() and
-            int(msg_len) == len(msg)):
-        return cmd, msg
+    if data.count("|") == 2:
+        cmd = data.split(DELIMITER, 3)[0].strip()
+        msg_len = data.split(DELIMITER, 3)[1].strip()
+        msg = data.split(DELIMITER, 3)[2]
+        if (msg_len.isnumeric() and
+                int(msg_len) == len(msg)):
+            return cmd, msg
+        else:
+            return ERROR_RETURN, ERROR_RETURN
     else:
         return ERROR_RETURN, ERROR_RETURN
 
