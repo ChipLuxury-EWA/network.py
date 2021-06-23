@@ -1,6 +1,6 @@
-My code, assignment, and more for network.py course:
-Link to course: https://campus.gov.il/course/cs-gov-cs-networkpy103-2020-1/
-Use my solutions to learn!
+My code, assignment, and more for network.py course:  
+Link to course: https://campus.gov.il/course/cs-gov-cs-networkpy103-2020-1/  
+Use my solutions to learn!  
 
 
 
