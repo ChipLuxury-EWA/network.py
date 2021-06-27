@@ -13,25 +13,24 @@ print("client is in the matrix!")
 while True:
     data = client_socket.recv(1024).decode()
     print("client sent this: " , data)
-    if data == "Quit":
+    if daTIMEta == "Quit":
         print("closing client socket now...")
         client_socket.send("Bye".encode())
         break
-    if data == "NAME":
+    elif data == "NAME":
         msg = "The name of the server is: servo"
         client_socket.send(msg.encode())
-        break
-    if data == "TIME":
+    elif data == "TIME":
         timestamp = time.strftime("%H:%M:%S", time.localtime())
         msg = "the time right now is: " + timestamp
         client_socket.send(msg.encode())
-        break
-    if data == "RAND":
+    elif data == "RAND":
         rand_numba = random.randint(1, 9)
-        msg = "Random number is: " + rand_numba
+        msg = "Random number is: " + str(rand_numba)
         client_socket.send(msg.encode())
-        break
-    client_socket.send((data.upper() + "!!!").encode())
+    else:
+        msg = "Please chose the right keyword!"
+        client_socket.send(msg.encode())
 
 client_socket.close()
 server_socket.close()
