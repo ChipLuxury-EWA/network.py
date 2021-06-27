@@ -1,5 +1,7 @@
 #!/bin/python3
 import socket
+import time
+import random
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(("0.0.0.0", 8820))
@@ -15,13 +17,19 @@ while True:
         print("closing client socket now...")
         client_socket.send("Bye".encode())
         break
-    if data == "Name":
-        print("closing client socket now...")
-        client_socket.send("Bye".encode())
+    if data == "NAME":
+        msg = "The name of the server is: servo"
+        client_socket.send(msg.encode())
         break
-    if data == "Time":
-        print("closing client socket now...")
-        client_socket.send("Bye".encode())
+    if data == "TIME":
+        timestamp = time.strftime("%H:%M:%S", time.localtime())
+        msg = "the time right now is: " + timestamp
+        client_socket.send(msg.encode())
+        break
+    if data == "RAND":
+        rand_numba = random.randint(1, 9)
+        msg = "Random number is: " + rand_numba
+        client_socket.send(msg.encode())
         break
     client_socket.send((data.upper() + "!!!").encode())
 
