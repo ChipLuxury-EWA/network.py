@@ -37,11 +37,10 @@ def recv_message_and_parse(conn):
 
 def connect():
     # Implement Code
-    trivia_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	trivia_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	trivia_socket.connect((SERVER_IP, SERVER_PORT))
 	
-	pass
-    return socket
+	return trivia_socket
 
 
 def error_and_exit(error_msg):
