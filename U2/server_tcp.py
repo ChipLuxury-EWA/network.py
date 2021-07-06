@@ -9,6 +9,7 @@ server_socket.listen()
 print("server is ready to your commands.")
 (client_socket, client_address) = server_socket.accept()
 print("client is in the matrix!")
+print("client address is: " , client_address)
 
 while True:
     data = client_socket.recv(1024).decode()

@@ -9,7 +9,7 @@ SERVER_PORT = 5678
 
 def build_and_send_message(conn, code, data):
 	msg = chatlib.build_message(code, data)
-	print("debug build message: ", msg)
+	# print("--------> debug <-------- build message: ", msg)
 	conn.send(msg.encode())
 
 def recv_message_and_parse(conn):
@@ -20,9 +20,9 @@ def recv_message_and_parse(conn):
 
 def connect():
 	# Implement Code
-	trivia_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	trivia_socket.connect((SERVER_IP, SERVER_PORT))
-	return trivia_socket
+	client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	client_socket.connect((SERVER_IP, SERVER_PORT))
+	return client_socket
 
 def error_and_exit(error_msg):
 	print(error_msg)
@@ -31,18 +31,32 @@ def error_and_exit(error_msg):
 
 def login(conn):
 	username = input("Please enter username: ")
-	password = input("please enter password: ")
+	password = input("Please enter password: ")
 	data = chatlib.join_data([username, password])
-	# Implement code
+	# print("--------> debug <-------- data is: "data)
 	build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], data)
 
 def logout(conn):
 	build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["logout_msg"], "")
 
+def build_send_recv_parse(conn, cmd, data):
+	build_and_send_message(conn, cmd, data)
+	msg_data, msg_code = recv_message_and_parse(conn)
+	return msg_data, msg_code
+
+def get_score(conn):
+	score = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["my_score"], "")
+	print(score)
+	return score
+
+def get_highscore(conn):
+	highscore = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["highscore"], "")
+	print(highscore)
+	return highscore
+
+
 def main():
-	my_socket = connect()
-	login(my_socket)
-	# logout(my_socket)
+	login(connect())	# logout(my_socket)
 	# my_socket.close()
 if __name__ == '__main__':
 	main()
