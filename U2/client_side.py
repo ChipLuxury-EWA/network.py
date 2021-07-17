@@ -58,5 +58,6 @@ def get_highscore(conn):
 def main():
 	login(connect())	# logout(my_socket)
 	# my_socket.close()
+
 if __name__ == '__main__':
 	main()
