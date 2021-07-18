@@ -28,13 +28,13 @@ PROTOCOL_CLIENT = {
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK!",
     "login_failed_msg": "ERROR",
-    "logged_ans": "LOGGED_ANSWER",
-    "your_question": "YOUR_QUESTION",
-    "correct_ans": "CORRECT_ANSWER",
-    "wrong_ans": "WRONG_ANSWER",
-    "your_score": "YOUR_SCORE",
-    "all_score": "ALL_SCORE",
-    "no_question": "NO_QUESTIONS"
+    "lon gged_ans": "LOGGED_ANSWER",
+    "yq": "YOUR_QUESTION",
+    "cs": "CORRECT_ANSWER",
+    "ws": "WRONG_ANSWER",
+    "ys": "YOUR_SCORE",
+    "as": "ALL_SCORE",
+    "nq": "NO_QUESTIONS"
 }  # ..  Add more commands if needed
 
 def build_message(cmd, data):  # creating a msg from cmd string and data string
