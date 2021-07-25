@@ -1,17 +1,20 @@
 #!/bin/python3
+import select
+import socket
 import sys
 sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
-import socket
 import chatlib
 
 # GLOBALS
 users = {}
 questions = {}
 logged_users = {} # a dictionary of client hostnames to usernames - will be used later
+client_sockets = []
 
 ERROR_MSG = "Error! "
 SERVER_PORT = 5678
 SERVER_IP = "127.0.0.1"
+MESSAGE_TO_SEND = []
 
 def build_and_send_message(conn, code, data):
 	msg = chatlib.build_message(code, data)
@@ -23,6 +26,11 @@ def recv_message_and_parse(conn):
 	print("[CLIENT] ",full_msg)	  # Debug print	
 	cmd, data = chatlib.parse_message(full_msg)
 	return cmd, data
+
+def print_client_sockets(client_sockets):
+    print("[SERVER]")
+	for client in client_sockets:
+        print("\t", client.getpeername())
 
 # Data Loaders #
 def load_questions():
@@ -47,80 +55,70 @@ def load_user_database():
 	users = {
 			"test"		:	{"password":"test","score":0,"questions_asked":[]},
 			"yossi"		:	{"password":"123","score":50,"questions_asked":[]},
-			"master"	:	{"password":"master","score":200,"questions_asked":[]}
+			"master"	:	{"password":"master","score":200,"questions_asked":[]},
+			"Tom"       :   {"password":"123456","score":0,"questions_asked":[]}
 			}
 	return users
 
-	
-# SOCKET CREATOR
-
 def setup_socket():
 	print("Setting up the server")
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	sock.bind((SERVER_PORT, SERVER_IP))
-	sock.listen()
+	sockt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sockt.bind((SERVER_IP, SERVER_PORT))
+	sockt.listen()
 	print("listening for a new clients")
-	return sock
+	return sockt
 
 def send_error(conn, error_msg):
 	conn.send(error_msg.encode())
 
 ##### MESSAGE HANDLING
-
-
 def handle_getscore_message(conn, username):
 	global users
 	# Implement this in later chapters
 
-	
-def handle_logout_message(conn):
-	"""
-	Closes the given socket (in laster chapters, also remove user from logged_users dictioary)
-	Recieves: socket
-	Returns: None
-	"""
-	global logged_users
-	
-	# Implement code ...
-
-
 def handle_login_message(conn, data):
-	"""
-	Gets socket and message data of login message. Checks  user and pass exists and match.
-	If not - sends error and finished. If all ok, sends OK message and adds user and address to logged_users
-	Recieves: socket, message code and data
-	Returns: None (sends answer to client)
-	"""
-	global users  # This is needed to access the same users dictionary from all functions
-	global logged_users	 # To be used later
-	
-	# Implement code ...
+    global users
+    users = load_user_database()
+    global logged_users
+    cmd, data = chatlib.parse_message(data)
+    if cmd == "LOGIN": #move this to client message handle
+        print("Logging new user:")
+    NAME = chatlib.split_data(data,2)[0]
+    PASSWORD = chatlib.split_data(data,2)[1]
+    if NAME in users.keys():
+        print(NAME, "is a registered user,")
+        if PASSWORD == users[NAME]["password"]:
+            print("password match.")
+            conn.send(chatlib.PROTOCOL_SERVER["login_ok_msg"].encode())
+        else:
+            print("password did not match, try again")
+            conn.send(chatlib.PROTOCOL_SERVER["login_failed_msg"].encode())
+    else:
+        print("Sorry but", NAME, "is not registered.\nplease speak with your DevOps team!")
+        conn.send(chatlib.PROTOCOL_SERVER["login_failed_msg"].encode())
 
+def handle_logout_message(conn):
+	global logged_users
+	print("closing conecttion")
+	client_sockets.remove(conn)
+	conn.close()
+	print_client_sockets(client_sockets)
 
 def handle_client_message(conn, cmd, data):
-	"""
-	Gets message code and data and calls the right function to handle command
-	Recieves: socket, message code and data
-	Returns: None
-	"""
 	global logged_users	 # To be used later
+	handle_login_message(conn, data)
+	handle_logout_message(conn)
 	
-	# Implement code ...
-	
-
-
 def main():
 	# Initializes global users and questions dicionaries using load functions, will be used later
 	global users
 	global questions
-	
 	print("Welcome to Trivia Server!")
-	
-	# Implement code ...
 
+	server_socket = setup_socket()
+	msg = server_socket.recv(1024).decode()
 
+	handle_client_message(server_socket, data)
 
 if __name__ == '__main__':
 	main()
-
-	

@@ -4,8 +4,8 @@ import socket
 import select
 
 MAX_MSG_LENGTH = 1024
-SERVER_PORT = "0.0.0.0"
-SERVER_IP = 8821
+SERVER_IP = "0.0.0.0"
+SERVER_PORT = 8821
 
 MESSAGE_TO_SEND = []
 
@@ -16,9 +16,10 @@ def print_client_sockets(client_sockets):
 def main():
     print("server is setting up")
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind((SERVER_PORT, SERVER_IP))
+    server_socket.bind((SERVER_IP, SERVER_PORT))
     server_socket.listen()
     print("listening for a new clients")
+    
     client_sockets = []
     while True:
         ready_to_read, ready_to_write, in_error = select.select([server_socket] + client_sockets, client_sockets, [])
@@ -37,7 +38,7 @@ def main():
                     current_socket.close()
                     print_client_sockets(client_sockets)
                 else:
-                    print(msg)
+                    print("[CLIENT]" ,msg)
                     # current_socket.send(msg.encode())
                     MESSAGE_TO_SEND.append((current_socket, msg))
                     for message in MESSAGE_TO_SEND:

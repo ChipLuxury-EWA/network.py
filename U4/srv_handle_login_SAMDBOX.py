@@ -2,7 +2,7 @@
 import sys
 sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
 import chatlib
-
+import socket
 users = {}
 questions = {}
 logged_users = {}
@@ -28,11 +28,11 @@ def load_user_database():
 			"test"		:	{"password":"test","score":0,"questions_asked":[]},
 			"yossi"		:	{"password":"123","score":50,"questions_asked":[]},
 			"master"	:	{"password":"master","score":200,"questions_asked":[]},
-			"Tom"       :   {"password":"31520","score":0,"questions_asked":[]}
+			"Tom"       :   {"password":"123456","score":0,"questions_asked":[]}
             }
 	return users
 
-log_msg = chatlib.build_message("LOGIN","test#test")
+log_msg = chatlib.build_message("LOGIN","Tom#123456")
 
 def handle_login_message(conn, data):
     global users

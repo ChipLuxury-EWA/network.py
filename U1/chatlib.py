@@ -21,7 +21,7 @@ PROTOCOL_CLIENT = {
     "log_state": "LOGGED",
     "get_quetion": "GET_QUESTION",
     "send_ans": "SEND_ANSWER",
-    "my_score": "MY_SCORE",
+    "ms": "MY_SCORE",
     "highscore": "HIGHSCORE"
 }  # .. Add more commands if needed
 
