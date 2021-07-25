@@ -19,8 +19,8 @@ PROTOCOL_CLIENT = {
     "login_msg": "LOGIN",
     "logout_msg": "LOGOUT",
     "log_state": "LOGGED",
-    "get_quetion": "GET_QUESTION",
-    "send_ans": "SEND_ANSWER",
+    "gq": "GET_QUESTION",
+    "sa": "SEND_ANSWER",
     "ms": "MY_SCORE",
     "highscore": "HIGHSCORE"
 }  # .. Add more commands if needed
@@ -28,7 +28,7 @@ PROTOCOL_CLIENT = {
 PROTOCOL_SERVER = {
     "login_ok_msg": "LOGIN_OK!",
     "login_failed_msg": "ERROR",
-    "lon gged_ans": "LOGGED_ANSWER",
+    "logged_ans": "LOGGED_ANSWER",
     "yq": "YOUR_QUESTION",
     "cs": "CORRECT_ANSWER",
     "ws": "WRONG_ANSWER",

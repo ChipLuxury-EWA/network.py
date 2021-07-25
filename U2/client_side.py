@@ -65,6 +65,26 @@ def get_highscore(conn):
 	print("[CLIENT]:\n",highscore)
 	return highscore
 
+def play_question(conn):
+	cmd, data = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["gq"], "")
+	id, question, ans1, ans2, ans3, ans4 = chatlib.split_data(data, 6)
+	print("[CLIENT] srv send question #",id, question)
+	print("1. ", ans1)
+	print("2. ", ans2)
+	print("3. ", ans3)
+	print("4. ", ans4)
+	ans = input("Choose wisely... :")
+	cmd, correct_ans = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["sa"], chatlib.join_data([id, ans]))
+	if cmd == "CORRECT_ANSWER":
+		print("great success!!", ans, " is the correct answer.")
+	elif cmd == "WRONG_ANSWER":
+		print("you are disgrace! take your krashim, you are not doing L\"G ba-omer with us!")
+	else:
+		error_and_exit("ERR play_question function")
+
+def get_logged_users(conn):
+	cmd, logged_players = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["log_state"], "")
+	print("Players in da game: ", logged_players)
 
 
 def main():
@@ -74,15 +94,21 @@ def main():
 
 	## LOOP:
 	print("""please choose option:
+	PQ - play trivia!
 	GS - get your score
 	HS - get high score
+	GP - get logged players
 	LO - logout from server
 	""")
 	opt = ""
 	while opt != "LO":
 		opt = input("please select option: ")
-		if opt == "GS":
+		if opt == "PQ":
+			play_question(client_socket)
+		elif opt == "GS":
 			get_score(client_socket)
+		elif opt == "GP":
+			get_logged_users(client_socket)
 		elif opt == "HS":
 			get_highscore(client_socket)
 		elif opt == "LO":
