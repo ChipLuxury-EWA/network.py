@@ -42,7 +42,7 @@ PROTOCOL_SERVER = {
 
 def build_message(cmd, data):  # creating a msg from cmd string and data string
     if cmd in PROTOCOL_SERVER.values() or cmd in PROTOCOL_CLIENT.values():
-        return cmd.ljust(CMD_FIELD_LENGTH) + DELIMITER + str(len(str(data))).zfill(4) + DELIMITER + data
+        return cmd.ljust(CMD_FIELD_LENGTH) + DELIMITER + str(len(str(data))).zfill(4) + DELIMITER + str(data)
     else:
         return ERROR_RETURN
 
