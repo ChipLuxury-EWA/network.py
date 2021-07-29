@@ -4,8 +4,11 @@ sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
 import socket
 import chatlib  # To use chatlib functions or consts, use chatlib.****
 
-SERVER_IP = "127.0.0.1"  # Our server will run on same computer as client
-SERVER_PORT = 5678
+SERVER_IP = chatlib.SOCKET_IP
+SERVER_PORT = chatlib.SOCKET_PORT
+
+# SERVER_IP = "127.0.0.1"  # Our server will run on same computer as client
+# SERVER_PORT = 5678
 
 #############################################################
 def build_and_send_message(conn, code, data):
@@ -41,7 +44,7 @@ def login(conn):
 		data = chatlib.join_data([username, password])
 		build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], data)
 		cmd, data = recv_message_and_parse(conn)
-		print("[CLIENT] srv send: ", cmd)
+		# print("[CLIENT]", cmd, "------", data)
 	return
 
 def logout(conn):

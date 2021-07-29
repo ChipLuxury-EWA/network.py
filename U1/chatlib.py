@@ -1,6 +1,9 @@
 #!/bin/python3
 # changes made by chip_luxury.
 
+
+SOCKET_IP = "127.0.0.1"
+SOCKET_PORT = 56786
 # Protocol Constants
 CMD_FIELD_LENGTH = 16  # Exact length of cmd field (in bytes)
 LENGTH_FIELD_LENGTH = 4   # Exact length of length field (in bytes)
@@ -26,7 +29,7 @@ PROTOCOL_CLIENT = {
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {
-    "login_ok_msg": "LOGIN_OK!",
+    "login_ok_msg": "LOGIN_OK",
     "login_failed_msg": "ERROR",
     "logged_ans": "LOGGED_ANSWER",
     "yq": "YOUR_QUESTION",
