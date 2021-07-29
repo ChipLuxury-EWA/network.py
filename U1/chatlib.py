@@ -3,7 +3,7 @@
 
 
 SOCKET_IP = "127.0.0.1"
-SOCKET_PORT = 56786
+SOCKET_PORT = 56790
 # Protocol Constants
 CMD_FIELD_LENGTH = 16  # Exact length of cmd field (in bytes)
 LENGTH_FIELD_LENGTH = 4   # Exact length of length field (in bytes)
@@ -42,7 +42,7 @@ PROTOCOL_SERVER = {
 
 def build_message(cmd, data):  # creating a msg from cmd string and data string
     if cmd in PROTOCOL_SERVER.values() or cmd in PROTOCOL_CLIENT.values():
-        return cmd.ljust(CMD_FIELD_LENGTH) + DELIMITER + str(len(data)).zfill(4) + DELIMITER + data
+        return cmd.ljust(CMD_FIELD_LENGTH) + DELIMITER + str(len(str(data))).zfill(4) + DELIMITER + data
     else:
         return ERROR_RETURN
 
