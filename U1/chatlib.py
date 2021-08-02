@@ -3,7 +3,7 @@
 
 
 SOCKET_IP = "127.0.0.1"
-SOCKET_PORT = 56790
+SOCKET_PORT = 56788
 # Protocol Constants
 CMD_FIELD_LENGTH = 16  # Exact length of cmd field (in bytes)
 LENGTH_FIELD_LENGTH = 4   # Exact length of length field (in bytes)
@@ -25,7 +25,7 @@ PROTOCOL_CLIENT = {
     "gq": "GET_QUESTION",
     "sa": "SEND_ANSWER",
     "ms": "MY_SCORE",
-    "highscore": "HIGHSCORE"
+    "highscore": "HIGH_SCORE"
 }  # .. Add more commands if needed
 
 PROTOCOL_SERVER = {
@@ -33,8 +33,8 @@ PROTOCOL_SERVER = {
     "login_failed_msg": "ERROR",
     "logged_ans": "LOGGED_ANSWER",
     "yq": "YOUR_QUESTION",
-    "cs": "CORRECT_ANSWER",
-    "ws": "WRONG_ANSWER",
+    "ca": "CORRECT_ANSWER",
+    "wa": "WRONG_ANSWER",
     "ys": "YOUR_SCORE",
     "as": "ALL_SCORE",
     "nq": "NO_QUESTIONS"
@@ -66,4 +66,4 @@ def split_data(msg, expected_fields):  # split the parameters from the data stri
         return ERROR_RETURN
 
 def join_data(msg_fields):  # join parameters from list to data message
-    return DATA_DELIMITER.join(str(i) for i in msg_fields)
+    return DATA_DELIMITER.join(str(i) for i in msg_fields)  #todo improve with postional arg

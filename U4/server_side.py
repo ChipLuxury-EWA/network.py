@@ -5,6 +5,7 @@ import socket
 import sys
 sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
 import chatlib
+import random
 
 users = {}
 questions = {}
@@ -23,12 +24,12 @@ MESSAGE_TO_SEND = []
 def build_and_send_message(conn, code, data):
 	msg = chatlib.build_message(code, data)
 	conn.send(msg.encode())
-	print("[SERVER]{bld&snd}",msg)	  # Debug print
+	print("[SERVER]{bld&snd}\t|",msg)	  # Debug print
 
 def recv_message_and_parse(conn):
 	full_msg = conn.recv(1024).decode()
 	cmd, data = chatlib.parse_message(full_msg)
-	print("[SERVER]{rcv&pars}",full_msg)	  # Debug print
+	print("[SERVER]{rcv&pars}\t|",full_msg)	  # Debug print
 	return cmd, data
 
 def setup_socket():
@@ -51,11 +52,20 @@ def load_questions():
 	Returns: questions dictionary
 	"""
 	questions = {
+				1 : {"question":"Who is spider man?","answers":["Peter Parker","Bruce Win","Clark Kent","Tony Stark"],"correct":1},
 				2313 : {"question":"How much is 2+2","answers":["3","4","2","1"],"correct":2},
 				4122 : {"question":"What is the capital of France?","answers":["Lion","Marseille","Paris","Montpellier"],"correct":3} 
 				}
-	
 	return questions
+
+def create_random_question():
+	rand_qstion_numba =random.choice(list(load_questions().keys()))
+	question = load_questions()[rand_qstion_numba]["question"]
+	answers = load_questions()[rand_qstion_numba]["answers"]
+	data_list = [rand_qstion_numba, question]
+	data_list.extend(answers)
+	data = chatlib.join_data(data_list)
+	return data
 
 def load_user_database():
 	"""
@@ -63,15 +73,18 @@ def load_user_database():
 	Recieves: -
 	Returns: user dictionary
 	"""
-	users = {
+	users_data = {
 			"test"		:	{"password":"test","score":0,"questions_asked":[]},
+			"a"		:		{"password":"a","score":1005,"questions_asked":[]},
 			"yossi"		:	{"password":"123","score":50,"questions_asked":[]},
 			"abc"		:	{"password":"123","score":500,"questions_asked":[]},
 			"master"	:	{"password":"master","score":200,"questions_asked":[]},
 			"Tom"		:	{"password":"1245","score":1000,"questions_asked":[]}
 			}
-	return users
+	return users_data
 
+users = load_user_database() #loading users data in each run session of the server
+							#I think this is duble code
 def send_error(conn, error_msg):
 	"""
 	Send error message with given message
@@ -84,24 +97,34 @@ def send_error(conn, error_msg):
 
 	
 ##### MESSAGE HANDLING
-def handle_client_message(conn, cmd, data):
+def handle_client_message(conn, cmd, msg_data):
 	global logged_users	 # To be used later
+
+	# print("------------debug------------\n" + cmd)
 	if cmd == "LOGIN":
-		handle_login_message(conn, data)
-	elif cmd == "LOGOUT" or cmd == None: #the None is for ctrl+c cases
+		handle_login_message(conn, msg_data)
+	elif cmd == "LOGOUT":		#or cmd == None: #the None is for ctrl+c cases
 		print("[SERVER] client logging out...")
 		handle_logout_message(conn)
-	# elif cmd == None:
-	# 	print("[SERVER]{hndl_clint_msg}_")
+	elif cmd == None: # when user press ctrl+c he sends: None
+		handle_logout_message(conn)
+		# print("[SERVER]{hndl_clint_msg} - None")
+	elif cmd == "MY_SCORE":
+		handle_getscore_message(conn)
+	elif cmd == "HIGH_SCORE":
+		handle_highscore_message(conn)
+	elif cmd == "GET_QUESTION":
+		handle_question_message(conn)
+	elif cmd == "SEND_ANSWER":
+		handle_answer_message(conn, msg_data)
+	elif cmd == "LOGGED":
+		handle_logged_message(conn)
 	else:
-		print("[SERVER]{hndl_clint_msg} else")
+		print("[SERVER]{hndl_clint_msg} - else")
 		# handle_logout_message(conn)
 
 def handle_login_message(conn, msg):
-	global users  # This is needed to access the same users dictionary from all functions
-	users = load_user_database()
-	global logged_users	 # To be used later
-	
+	global logged_users	 # To be used later	
 	NAME = chatlib.split_data(msg,2)[0]
 	PASSWORD = chatlib.split_data(msg,2)[1]
 	if NAME in users.keys():
@@ -110,6 +133,7 @@ def handle_login_message(conn, msg):
 			print("password match.")
 			# logged_users[NAME] = 1
 			build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], "")
+			logged_users[conn.getpeername()[1]] = NAME
 			# MESSAGE_TO_SEND.append((conn,))
 		else:
 			print("password did not match, try again")
@@ -121,14 +145,51 @@ def handle_login_message(conn, msg):
 def handle_logout_message(conn):
 	global logged_users
 	print("removing player from the metrix...")
+	logged_users.pop(conn.getpeername()[1])
 	client_sockets.remove(conn)
 	conn.close()
 	print_client_sockets(client_sockets)
 
-def handle_getscore_message(conn, username):
+def handle_getscore_message(conn):
 	global users
-	# Implement this in later chapters
+	NAME = logged_users[conn.getpeername()[1]]
+	score = users[NAME]["score"]
+	build_and_send_message(conn, chatlib.PROTOCOL_SERVER["ys"], score)
 
+def handle_highscore_message(conn):
+	global users
+	# NAME = logged_users[conn.getpeername()[1]]
+	sorted_users = sorted(users.items(), key=lambda item: item[1]["score"], reverse = True)
+	msg = []
+	for name, values in sorted_users:
+		player_and_score = name + ":" + str(values["score"])
+		msg.append(player_and_score)
+	build_and_send_message(conn, chatlib.PROTOCOL_SERVER["as"] ,"\n".join(str(i) for i in msg))
+
+def handle_logged_message(conn):
+	global logged_users
+	LU = ",".join(list(logged_users.values()))
+	print("--------debug------\n" + LU)
+	build_and_send_message(conn, chatlib.PROTOCOL_SERVER["logged_ans"], LU)
+
+def handle_question_message(conn):
+	data = create_random_question()
+	build_and_send_message(conn, chatlib.PROTOCOL_SERVER["yq"], data)
+
+def handle_answer_message(conn, data):
+	global users
+	global questions
+	questions = load_questions()
+	NAME = logged_users[conn.getpeername()[1]]
+	qstn_numba = chatlib.split_data(data, 2)[0]
+	player_ans = chatlib.split_data(data, 2)[1]
+	currect_ans = questions[int(qstn_numba)]["correct"]
+	##
+	if int(player_ans) == currect_ans:
+		users[NAME]["score"] += 5
+		build_and_send_message(conn, chatlib.PROTOCOL_SERVER["ca"], "")
+	else:
+		build_and_send_message(conn, chatlib.PROTOCOL_SERVER["wa"], currect_ans)
 
 def main():
 	# Initializes global users and questions dicionaries using load functions, will be used later
@@ -146,7 +207,7 @@ def main():
 				client_sockets.append(client_socket)
 				print_client_sockets(client_sockets)
 			else:			#this is the "main" section 
-				print("new data from client ", client_address, ":") #reciving the msg from client:
+				print("new data from client ", client_address[1], ":") #reciving the msg from client:
 				command, data = recv_message_and_parse(current_socket)
 				handle_client_message(current_socket, command, data)
 

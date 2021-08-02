@@ -65,7 +65,7 @@ def get_highscore(conn):
 	if cmd != "ALL_SCORE":
 		print("[CLIENT] error in get_highscore function")
 		error_and_exit()
-	print("[CLIENT]:\n",highscore)
+	print("[CLIENT]:\n" + highscore)
 	return highscore
 
 def play_question(conn):
@@ -118,6 +118,7 @@ def main():
 			logout(client_socket)
 		else:
 			print("else - please choose right ans")
+	client_socket.close()
 
 
 if __name__ == '__main__':
