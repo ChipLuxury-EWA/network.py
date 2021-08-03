@@ -11,19 +11,21 @@ users = {}
 questions = {}
 logged_users = {} # a dictionary of client hostnames to usernames - will be used later
 
+
 ERROR_MSG = "Error! "
 SERVER_PORT = chatlib.SOCKET_PORT
 SERVER_IP = chatlib.SOCKET_IP
-# SERVER_PORT = 5678
-# SERVER_IP = "127.0.0.1"
 
 client_sockets = []
 MESSAGE_TO_SEND = []
+# MESSAGE_TO_SEND = [(getpeername, message to send)]
 
 
 def build_and_send_message(conn, code, data):
+	global MESSAGE_TO_SEND
 	msg = chatlib.build_message(code, data)
-	conn.send(msg.encode())
+	# conn.send(msg.encode())
+	MESSAGE_TO_SEND.append((conn, msg))
 	print("[SERVER]{bld&snd}\t|",msg)	  # Debug print
 
 def recv_message_and_parse(conn):
@@ -195,6 +197,8 @@ def main():
 	# Initializes global users and questions dicionaries using load functions, will be used later
 	global users
 	global questions
+	global MESSAGE_TO_SEND
+
 	print("Welcome to Trivia Server!")
 	server_socket = setup_socket()
 	
@@ -209,7 +213,12 @@ def main():
 			else:			#this is the "main" section 
 				print("new data from client ", client_address[1], ":") #reciving the msg from client:
 				command, data = recv_message_and_parse(current_socket)
-				handle_client_message(current_socket, command, data)
+				handle_client_message(current_socket, command, data)				
+				for message in MESSAGE_TO_SEND:
+					current_socket, msg = message
+					if current_socket in r2w:
+						current_socket.send(msg.encode())
+						MESSAGE_TO_SEND.remove(message)
 
 if __name__ == '__main__':
 	main()

@@ -3,7 +3,7 @@
 
 
 SOCKET_IP = "127.0.0.1"
-SOCKET_PORT = 56788
+SOCKET_PORT = 5678
 # Protocol Constants
 CMD_FIELD_LENGTH = 16  # Exact length of cmd field (in bytes)
 LENGTH_FIELD_LENGTH = 4   # Exact length of length field (in bytes)
