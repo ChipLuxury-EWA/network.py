@@ -1,14 +1,9 @@
 #!/bin/python3
-import sys
-sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
 import socket
 import chatlib  # To use chatlib functions or consts, use chatlib.****
 
 SERVER_IP = chatlib.SOCKET_IP
 SERVER_PORT = chatlib.SOCKET_PORT
-
-# SERVER_IP = "127.0.0.1"  # Our server will run on same computer as client
-# SERVER_PORT = 5678
 
 #############################################################
 def build_and_send_message(conn, code, data):
@@ -44,7 +39,6 @@ def login(conn):
 		data = chatlib.join_data([username, password])
 		build_and_send_message(conn, chatlib.PROTOCOL_CLIENT["login_msg"], data)
 		cmd, data = recv_message_and_parse(conn)
-		# print("[CLIENT]", cmd, "------", data)
 	return
 
 def logout(conn):
@@ -89,7 +83,6 @@ def get_logged_users(conn):
 	cmd, logged_players = build_send_recv_parse(conn, chatlib.PROTOCOL_CLIENT["log_state"], "")
 	print("Players in da game: ", logged_players)
 
-
 def main():
 	## SETUP:
 	client_socket = connect()
@@ -119,7 +112,6 @@ def main():
 		else:
 			print("else - please choose right ans")
 	client_socket.close()
-
 
 if __name__ == '__main__':
 	main()

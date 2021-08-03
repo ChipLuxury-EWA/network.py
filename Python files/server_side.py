@@ -2,8 +2,6 @@
 
 import select
 import socket
-import sys
-sys.path.append("/home/chip_luxury/Documents/network.py/U1/")
 import chatlib
 import random
 
@@ -11,20 +9,16 @@ users = {}
 questions = {}
 logged_users = {} # a dictionary of client hostnames to usernames - will be used later
 
-
 ERROR_MSG = "Error! "
 SERVER_PORT = chatlib.SOCKET_PORT
 SERVER_IP = chatlib.SOCKET_IP
 
 client_sockets = []
 MESSAGE_TO_SEND = []
-# MESSAGE_TO_SEND = [(getpeername, message to send)]
-
 
 def build_and_send_message(conn, code, data):
 	global MESSAGE_TO_SEND
 	msg = chatlib.build_message(code, data)
-	# conn.send(msg.encode())
 	MESSAGE_TO_SEND.append((conn, msg))
 	print("[SERVER]{bld&snd}\t|",msg)	  # Debug print
 
@@ -45,7 +39,6 @@ def setup_socket():
 def print_client_sockets(client_sockets):
     for client in client_sockets:
         print("\t", client.getpeername())
-# Data Loaders #
 
 def load_questions():
 	"""
@@ -86,7 +79,7 @@ def load_user_database():
 	return users_data
 
 users = load_user_database() #loading users data in each run session of the server
-							#I think this is duble code
+
 def send_error(conn, error_msg):
 	"""
 	Send error message with given message
@@ -94,23 +87,18 @@ def send_error(conn, error_msg):
 	Returns: None
 	"""
 	# Implement code ...
-	
 
-
-	
 ##### MESSAGE HANDLING
 def handle_client_message(conn, cmd, msg_data):
 	global logged_users	 # To be used later
 
-	# print("------------debug------------\n" + cmd)
 	if cmd == "LOGIN":
 		handle_login_message(conn, msg_data)
-	elif cmd == "LOGOUT":		#or cmd == None: #the None is for ctrl+c cases
+	elif cmd == "LOGOUT":
 		print("[SERVER] client logging out...")
 		handle_logout_message(conn)
 	elif cmd == None: # when user press ctrl+c he sends: None
 		handle_logout_message(conn)
-		# print("[SERVER]{hndl_clint_msg} - None")
 	elif cmd == "MY_SCORE":
 		handle_getscore_message(conn)
 	elif cmd == "HIGH_SCORE":
@@ -133,10 +121,8 @@ def handle_login_message(conn, msg):
 		print(NAME, "is a registered user,")
 		if PASSWORD == users[NAME]["password"]:
 			print("password match.")
-			# logged_users[NAME] = 1
 			build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_ok_msg"], "")
 			logged_users[conn.getpeername()[1]] = NAME
-			# MESSAGE_TO_SEND.append((conn,))
 		else:
 			print("password did not match, try again")
 			build_and_send_message(conn, chatlib.PROTOCOL_SERVER["login_failed_msg"], "")
@@ -160,7 +146,6 @@ def handle_getscore_message(conn):
 
 def handle_highscore_message(conn):
 	global users
-	# NAME = logged_users[conn.getpeername()[1]]
 	sorted_users = sorted(users.items(), key=lambda item: item[1]["score"], reverse = True)
 	msg = []
 	for name, values in sorted_users:
@@ -198,7 +183,7 @@ def main():
 	global users
 	global questions
 	global MESSAGE_TO_SEND
-
+	
 	print("Welcome to Trivia Server!")
 	server_socket = setup_socket()
 	
