@@ -9,7 +9,7 @@ In the folder "Python files" you will find 3 python source codes:
 2) client_side.py
 3) server_side.py
 
-To start the game first run "server_side.py" this will be the server that let's you play the game.
+To start the game: first run "server_side.py" this will be the server that let's you play the game.
 To enter as a new player run the "client_side.py" and enter name and password, check the server file for the players
 data base, and add player as you whish.
 To add another player simply run another client.
